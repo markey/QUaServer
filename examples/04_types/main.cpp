@@ -19,12 +19,19 @@ int main(int argc, char *argv[])
 
 	// create new type instances
 
-	auto sensor1 = objsFolder->addChild<TemperatureSensor>();
-	sensor1->setDisplayName("Sensor1");
-	auto sensor2 = objsFolder->addChild<TemperatureSensor>();
-	sensor2->setDisplayName("Sensor2");
-	auto sensor3 = objsFolder->addChild<TemperatureSensor>();
-	sensor3->setDisplayName("Sensor3");
+    auto sensor1 = objsFolder->addChild<TemperatureSensor>();
+    sensor1->setDisplayName("Sensor1");
+
+    QUaBaseDataVariable * varBaseData = sensor1->addBaseDataVariable("ns=1;s=MyStatus");
+    varBaseData->setWriteAccess(true);
+    varBaseData->setDataType(QMetaType::QString);
+    varBaseData->setValue("OFF");
+    varBaseData->setBrowseName("status");
+
+//	auto sensor2 = objsFolder->addChild<TemperatureSensor>();
+//	sensor2->setDisplayName("Sensor2");
+//	auto sensor3 = objsFolder->addChild<TemperatureSensor>();
+//	sensor3->setDisplayName("Sensor3");
 
 	server.start();
 
