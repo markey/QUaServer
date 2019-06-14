@@ -1,4 +1,4 @@
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
 
 #include <QUaServer>
@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
 
 	QUaServer server;
 
@@ -19,19 +19,20 @@ int main(int argc, char *argv[])
 
 	// create new type instances
 
-    auto sensor1 = objsFolder->addChild<TemperatureSensor>();
-    sensor1->setDisplayName("Sensor1");
+    QUaBaseObject * sensor = nullptr;
 
-    QUaBaseDataVariable * varBaseData = sensor1->addBaseDataVariable("ns=1;s=MyStatus");
-    varBaseData->setWriteAccess(true);
-    varBaseData->setDataType(QMetaType::QString);
-    varBaseData->setValue("OFF");
-    varBaseData->setBrowseName("status");
+    for ( int si = 0; si < 1000; si++ ) {
+        sensor = objsFolder->addChild<TemperatureSensor>();
+        sensor->setDisplayName(QString("Sensor%1").arg(si));
 
-//	auto sensor2 = objsFolder->addChild<TemperatureSensor>();
-//	sensor2->setDisplayName("Sensor2");
-//	auto sensor3 = objsFolder->addChild<TemperatureSensor>();
-//	sensor3->setDisplayName("Sensor3");
+        for ( int i = 0; i < 10; i++ ) {
+            auto varBaseData = sensor->addBaseDataVariable(QString("ns=1;s=%1_StringVar%2").arg(sensor->displayName()).arg(i));
+            varBaseData->setWriteAccess(true);
+            varBaseData->setDataType(QMetaType::QString);
+            varBaseData->setValue("OFF");
+            varBaseData->setBrowseName("status");
+        }
+    }
 
 	server.start();
 
