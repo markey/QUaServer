@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QUaServer>
+
 #include "ui_SimplexOpcServer.h"
 
 
@@ -11,8 +13,12 @@ class SimplexOpcServer : public QMainWindow
 public:
     SimplexOpcServer(QWidget *parent = Q_NULLPTR);
 
+private slots:
+    void startServer();
+    void stopServer();
+
 private:
     Ui::SimplexOpcServerClass ui;
 
-private slots:
+    QUaServer* m_server;
 };
