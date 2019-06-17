@@ -12,6 +12,11 @@ SimplexOpcServer::SimplexOpcServer(QWidget *parent)
     connect(ui.stopServerButton, &QPushButton::clicked, this, &SimplexOpcServer::stopServer);
 }
 
+SimplexOpcServer::~SimplexOpcServer()
+{
+    delete m_server;
+}
+
 void SimplexOpcServer::startServer()
 {
     m_server = new QUaServer();

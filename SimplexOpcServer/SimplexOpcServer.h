@@ -12,6 +12,7 @@ class SimplexOpcServer : public QMainWindow
 
 public:
     SimplexOpcServer(QWidget *parent = Q_NULLPTR);
+    ~SimplexOpcServer();
 
 private slots:
     void startServer();
