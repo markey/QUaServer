@@ -1,9 +1,9 @@
 QT += core gui widgets
 
 CONFIG += c++11
+CONFIG -= app_bundle
 
 TARGET = SimplexOpcServer
-CONFIG -= app_bundle
 
 TEMPLATE = app
 
