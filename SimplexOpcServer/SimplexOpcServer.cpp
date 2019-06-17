@@ -1,5 +1,6 @@
 #include "SimplexOpcServer.h"
 
+#include "customvar.h"
 #include "temperaturesensor.h"
 
 SimplexOpcServer::SimplexOpcServer(QWidget *parent)
@@ -22,6 +23,13 @@ void SimplexOpcServer::startServer()
     m_server = new QUaServer();
 
     QUaFolderObject * objsFolder = m_server->objectsFolder();
+
+    // Custom Variable
+
+    m_server->registerType<CustomVar>();
+
+    auto custom1 = objsFolder->addChild<CustomVar>();
+    custom1->setDisplayName("custom1");
 
     // register new type
 

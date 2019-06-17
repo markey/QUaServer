@@ -23,3 +23,10 @@ private:
 
     QUaServer* m_server;
 };
+
+class MyDataType : public QUaBaseDataVariable
+{
+    Q_OBJECT
+
+};
+

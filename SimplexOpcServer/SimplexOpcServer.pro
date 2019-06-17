@@ -17,6 +17,9 @@ HEADERS += SimplexOpcServer.h
 HEADERS += temperaturesensor.h
 SOURCES += temperaturesensor.cpp
 
+HEADERS += customvar.h
+SOURCES += customvar.cpp
+
 FORMS   += SimplexOpcServer.ui
 
 include($$PWD/../src/wrapper/quaserver.pri)
