@@ -4,10 +4,9 @@
 
 SimplexOpcServer::SimplexOpcServer(QWidget *parent)
     : QMainWindow(parent)
+    , m_server(nullptr)
 {
 	ui.setupUi(this);
-
-    m_server = new QUaServer();
 
     connect(ui.startServerButton, &QPushButton::clicked, this, &SimplexOpcServer::startServer);
     connect(ui.stopServerButton, &QPushButton::clicked, this, &SimplexOpcServer::stopServer);
@@ -15,6 +14,8 @@ SimplexOpcServer::SimplexOpcServer(QWidget *parent)
 
 void SimplexOpcServer::startServer()
 {
+    m_server = new QUaServer();
+
     QUaFolderObject * objsFolder = m_server->objectsFolder();
 
     // register new type
@@ -50,6 +51,9 @@ void SimplexOpcServer::startServer()
 void SimplexOpcServer::stopServer()
 {
     m_server->stop();
+
+    delete m_server;
+    m_server = nullptr;
 
     ui.startServerButton->setEnabled(true);
     ui.stopServerButton->setEnabled(false);
