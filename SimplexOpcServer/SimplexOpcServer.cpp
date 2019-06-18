@@ -20,7 +20,7 @@ SimplexOpcServer::~SimplexOpcServer()
 
 void SimplexOpcServer::startServer()
 {
-    m_server = new QUaServer();
+    m_server = new QUaServer(4841);
 
     QUaFolderObject * objsFolder = m_server->objectsFolder();
 
