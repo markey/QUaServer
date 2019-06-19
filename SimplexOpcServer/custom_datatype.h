@@ -1,6 +1,8 @@
 /* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information. */
 
+#include <QUaServer>
+
 typedef struct {
     UA_Float x;
     UA_Float y;
@@ -44,7 +46,7 @@ static const UA_DataType PointType = {
         false,                           /* .overlayable (depends on endianness and
                                          the absence of padding) */
         3,                               /* .membersSize */
-        0,                               /* .binaryEncodingId, the numeric
+        UA_NS0ID_DATATYPENODE_ENCODING_DEFAULTBINARY,                               /* .binaryEncodingId, the numeric
                                          identifier used on the wire (the
                                          namespaceindex is from .typeId) */
         Point_members

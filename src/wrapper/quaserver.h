@@ -57,6 +57,8 @@ public:
 
 	quint16 port() const;
 
+    UA_Server* ua_server() const {return m_server;}
+
 	// Server Description API
 
 	QString applicationName() const;
@@ -73,6 +75,7 @@ public:
 	void    setSoftwareVersion(const QString &strSoftwareVersion);
 	QString buildNumber() const;
 	void    setBuildNumber(const QString &strBuildNumber);
+    void    setCustomDataTypes(UA_DataType* types);
 
 	// Server LifeCycle API
 

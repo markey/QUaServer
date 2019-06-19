@@ -876,6 +876,17 @@ void QUaServer::setBuildNumber(const QString & strBuildNumber)
 	config->buildInfo.buildNumber = UA_STRING(m_byteBuildNumber.data());
 }
 
+void QUaServer::setCustomDataTypes(UA_DataType* types)
+{
+    // update config
+    UA_ServerConfig * config = UA_Server_getConfig(m_server);
+    UA_DataTypeArray* customDataTypes = (UA_DataTypeArray*) UA_malloc(sizeof(UA_DataTypeArray));
+    UA_DataTypeArray tempArray = {config->customDataTypes, 1, types};
+    memcpy(customDataTypes, &tempArray, sizeof(UA_DataTypeArray));
+
+    config->customDataTypes = customDataTypes;
+}
+
 void QUaServer::start()
 {
 	// NOTE : we must define port and other server params upon instantiation, 
