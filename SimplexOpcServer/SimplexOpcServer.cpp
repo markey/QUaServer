@@ -1,5 +1,7 @@
 #include "SimplexOpcServer.h"
 
+#include "custom_datatype.h"
+
 #include "customvar.h"
 #include "temperaturesensor.h"
 
