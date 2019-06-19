@@ -106,8 +106,7 @@ void SimplexOpcServer::startServer()
     m_server->setCustomDataTypes(types);
 
    UA_DataTypeAttributes dtAttr;
-   UA_NodeId DataTypeEncodingNodeId;
-
+   UA_NodeId DataTypeEncodingNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE);
    UA_NodeId PointDataTypeNodeId = { 1, UA_NODEIDTYPE_NUMERIC,{ 1 } };
 
    UA_DataTypeAttributes_init(&dtAttr);
