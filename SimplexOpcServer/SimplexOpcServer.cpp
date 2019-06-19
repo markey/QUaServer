@@ -107,13 +107,12 @@ void SimplexOpcServer::startServer()
 
    UA_DataTypeAttributes dtAttr;
    UA_NodeId DataTypeEncodingNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE);
-   UA_NodeId PointDataTypeNodeId = { 1, UA_NODEIDTYPE_NUMERIC,{ 1 } };
 
    UA_DataTypeAttributes_init(&dtAttr);
    dtAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType description");
    dtAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
 
-   UA_Server_addDataTypeNode(m_server->ua_server(), PointDataTypeNodeId,
+   UA_Server_addDataTypeNode(m_server->ua_server(), PointType.typeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_STRUCTURE),
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
       UA_QUALIFIEDNAME(1, (char *) "PointDataType"),
@@ -136,7 +135,7 @@ void SimplexOpcServer::startServer()
     p.z = 0.0;
     UA_Variant_setScalar(&dattr.value, &p, &PointType);
 
-    auto st = UA_Server_addVariableTypeNode(m_server->ua_server(), PointType.typeId,
+    auto st = UA_Server_addVariableTypeNode(m_server->ua_server(), UA_NODEID_NULL,
                                   UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
                                   UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
                                   UA_QUALIFIEDNAME(1, (char *) "3D.Point"),
@@ -160,15 +159,15 @@ void SimplexOpcServer::startServer()
 //      oAttr, NULL, &DataTypeEncodingNodeId);
 
    UA_Server_addReference(m_server->ua_server(),
-      PointDataTypeNodeId,
+      PointType.typeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASENCODING),
-      UA_EXPANDEDNODEID_NUMERIC(DataTypeEncodingNodeId.namespaceIndex, DataTypeEncodingNodeId.identifier.numeric),
+      UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_ARGUMENT_ENCODING_DEFAULTBINARY),
       TRUE);
 
    UA_Server_addReference(m_server->ua_server(),
-      DataTypeEncodingNodeId,
-      UA_NODEID_NUMERIC(0, UA_NS0ID_HASDESCRIPTION),
-      UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_DATATYPEDESCRIPTIONTYPE),
+      UA_NODEID_NUMERIC(0, UA_NS0ID_ARGUMENT_ENCODING_DEFAULTBINARY),
+      PointType.typeId,
+      UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_HASDESCRIPTION),
       TRUE);
 
     // Instance 3D Point
