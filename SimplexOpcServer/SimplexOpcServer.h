@@ -19,7 +19,6 @@ private slots:
     void stopServer();
 
 private:
-    void addDataTypeEncodingDescriptionDictionarySystemTypes(UA_Server *server);
     Ui::SimplexOpcServerClass ui;
 
     QUaServer* m_server;

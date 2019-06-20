@@ -18,80 +18,10 @@ SimplexOpcServer::~SimplexOpcServer()
     delete m_server;
 }
 
-void SimplexOpcServer::addDataTypeEncodingDescriptionDictionarySystemTypes(UA_Server *server)
-{
-   /* Add DataTypeEncodingType*/
-   UA_ObjectTypeAttributes otEncAttr;
-   UA_ObjectTypeAttributes_init(&otEncAttr);
-   otEncAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeEncodingType");
-   otEncAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeEncodingType");
-   UA_Server_addObjectTypeNode(server, UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
-      UA_QUALIFIEDNAME(1, (char *) "DataTypeEncodingType"),
-      otEncAttr,
-      NULL,
-      NULL);
-
-   /* Add DataTypeDescriptionType */
-   UA_VariableTypeAttributes vtDescAttr;
-   UA_VariableTypeAttributes_init(&vtDescAttr);
-   vtDescAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeDescriptionType");
-   vtDescAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeDescriptionType");
-   vtDescAttr.valueRank = -1;
-   vtDescAttr.dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BYTESTRING);
-   UA_ByteString vtAttrByteString = UA_BYTESTRING((char *) "");
-   UA_Variant_setScalar(&vtDescAttr.value, &vtAttrByteString, &UA_TYPES[UA_TYPES_BYTESTRING]);
-
-   UA_Server_addVariableTypeNode(server,
-      UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEDESCRIPTIONTYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
-      UA_QUALIFIEDNAME(0, (char *) "DataTypeDescriptionType"),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_BYTESTRING),
-      vtDescAttr,
-      NULL,
-      NULL);
-
-   /* Add DataTypeDictionaryType */
-   UA_VariableTypeAttributes vtDictAttr;
-   UA_VariableTypeAttributes_init(&vtDictAttr);
-   vtDictAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeDictionaryType");
-   vtDictAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeDictionaryType");
-   vtDictAttr.valueRank = -1;
-   vtDictAttr.dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BYTESTRING);
-   UA_ByteString vtDictionaryAttrByteString = UA_BYTESTRING((char *) "");
-   UA_Variant_setScalar(&vtDictAttr.value, &vtDictionaryAttrByteString, &UA_TYPES[UA_TYPES_BYTESTRING]);
-
-   UA_Server_addVariableTypeNode(server,
-      UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEDICTIONARYTYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
-      UA_QUALIFIEDNAME(0, (char *) "DataTypeDictionaryType"),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_BYTESTRING),
-      vtDictAttr,
-      NULL,
-      NULL);
-
-   /* Add DataTypeSystemType*/
-   UA_ObjectTypeAttributes otSystemAttr;
-   UA_ObjectTypeAttributes_init(&otSystemAttr);
-   otSystemAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeSystemType");
-   otSystemAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "DataTypeSystemType");
-   UA_Server_addObjectTypeNode(server,
-      UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPESYSTEMTYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
-      UA_QUALIFIEDNAME(1, (char *) "DataTypeSystemType"),
-      otSystemAttr,
-      NULL,
-      NULL);
-}
 
 void SimplexOpcServer::startServer()
 {
     m_server = new QUaServer(4841);
-
     QUaFolderObject * objsFolder = m_server->objectsFolder();
 
     /* Make your custom datatype known to the stack */
@@ -104,9 +34,11 @@ void SimplexOpcServer::startServer()
     types[0].members = members;
 
     m_server->setCustomDataTypes(types);
+    ///////////////
 
    UA_DataTypeAttributes dtAttr;
    UA_NodeId DataTypeEncodingNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE);
+   UA_StatusCode ret;
 
    UA_DataTypeAttributes_init(&dtAttr);
    dtAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType description");
@@ -120,7 +52,7 @@ void SimplexOpcServer::startServer()
       NULL,
       NULL);
 
-//    addDataTypeEncodingDescriptionDictionarySystemTypes(m_server->ua_server());
+
 
     // Register 3D Point
     UA_VariableTypeAttributes dattr = UA_VariableTypeAttributes_default;
@@ -135,14 +67,14 @@ void SimplexOpcServer::startServer()
     p.z = 0.0;
     UA_Variant_setScalar(&dattr.value, &p, &PointType);
 
-    auto st = UA_Server_addVariableTypeNode(m_server->ua_server(), UA_NODEID_NULL,
+    ret = UA_Server_addVariableTypeNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point Type"),
                                   UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
                                   UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
                                   UA_QUALIFIEDNAME(1, (char *) "3D.Point"),
                                   UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
                                   dattr, NULL, NULL);
 
-    Q_ASSERT(st == UA_STATUSCODE_GOOD);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
 //   /* Add DataTypeEncoding object Default Binary */
 //   UA_ObjectAttributes oAttr;
@@ -182,13 +114,14 @@ void SimplexOpcServer::startServer()
     vattr.valueRank = UA_VALUERANK_SCALAR;
     UA_Variant_setScalar(&vattr.value, &p1, &PointType);
 
-    st = UA_Server_addVariableNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point"),
+    ret = UA_Server_addVariableNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point"),
                               UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
                               UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES),
                               UA_QUALIFIEDNAME(1, (char *) "3D.Point"),
-                              PointType.typeId, vattr, NULL, NULL);
+                              UA_NODEID_STRING(1, (char *) "3D.Point Type"),
+                              vattr, NULL, NULL);
 
-    Q_ASSERT(st == UA_STATUSCODE_GOOD);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
     // Custom Variable
 
