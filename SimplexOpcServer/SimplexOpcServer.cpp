@@ -37,7 +37,7 @@ void SimplexOpcServer::startServer()
     ///////////////
 
    UA_DataTypeAttributes dtAttr;
-   UA_NodeId DataTypeEncodingNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE);
+   UA_NodeId DataTypeEncodingNodeId;
    UA_StatusCode ret;
 
    UA_DataTypeAttributes_init(&dtAttr);
@@ -76,30 +76,52 @@ void SimplexOpcServer::startServer()
 
     Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
-//   /* Add DataTypeEncoding object Default Binary */
-//   UA_ObjectAttributes oAttr;
-//   UA_ObjectAttributes_init(&oAttr);
-//   oAttr.displayName = UA_LOCALIZEDTEXT("en_US", "Default Binary");
-//   oAttr.description = UA_LOCALIZEDTEXT("en_US", "Default Binary");
+   /* Add DataTypeDescription variable */
+   UA_NodeId niDataTypeDesc;
+   UA_VariableAttributes vaDescription;
+   UA_VariableAttributes_init(&vaDescription);
+   vaDescription.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
+   vaDescription.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
+   vaDescription.valueRank = -1;
+   vaDescription.dataType = UA_TYPES[UA_TYPES_BYTESTRING].typeId;
 
-//   UA_Server_addObjectNode(m_server->ua_server()),
-//      UA_NODEID_NULL,
-//      UA_NODEID_NULL,
-//      UA_NODEID_NULL,
-//      UA_QUALIFIEDNAME(0, "Default Binary"),
-//      UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE),
-//      oAttr, NULL, &DataTypeEncodingNodeId);
+   UA_ByteString bsAttrDesc = UA_BYTESTRING((char *) "PointDataType");
+   UA_Variant_setScalar(&vaDescription.value, &bsAttrDesc, &UA_TYPES[UA_TYPES_BYTESTRING]);
+
+   ret = UA_Server_addVariableNode(m_server->ua_server(),
+      UA_NODEID_NULL,
+      UA_NODEID_NUMERIC(0, UA_NS0ID_OPCUA_BINARYSCHEMA),
+      UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+      UA_QUALIFIEDNAME(0, (char *) "PointDataType"),
+      UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEDESCRIPTIONTYPE),
+      vaDescription, NULL, &niDataTypeDesc);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
+
+
+   /* Add DataTypeEncoding object Default Binary */
+   UA_ObjectAttributes oAttr;
+   UA_ObjectAttributes_init(&oAttr);
+   oAttr.displayName = UA_LOCALIZEDTEXT((char * ) "en_US", (char * ) "Default Binary");
+   oAttr.description = UA_LOCALIZEDTEXT((char * ) "en_US", (char * ) "Default Binary");
+
+   UA_Server_addObjectNode(m_server->ua_server(),
+      UA_NODEID_NULL,
+      UA_NODEID_NULL,
+      UA_NODEID_NULL,
+      UA_QUALIFIEDNAME(0, (char * ) "Default Binary"),
+      UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE),
+      oAttr, NULL, &DataTypeEncodingNodeId);
 
    UA_Server_addReference(m_server->ua_server(),
       PointType.typeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASENCODING),
-      UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_ARGUMENT_ENCODING_DEFAULTBINARY),
+      UA_EXPANDEDNODEID_NUMERIC(DataTypeEncodingNodeId.namespaceIndex, DataTypeEncodingNodeId.identifier.numeric),
       TRUE);
 
    UA_Server_addReference(m_server->ua_server(),
-      UA_NODEID_NUMERIC(0, UA_NS0ID_ARGUMENT_ENCODING_DEFAULTBINARY),
-      PointType.typeId,
-      UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_HASDESCRIPTION),
+      DataTypeEncodingNodeId,
+      UA_NODEID_NUMERIC(0, UA_NS0ID_HASDESCRIPTION),
+      UA_EXPANDEDNODEID_NUMERIC(niDataTypeDesc.namespaceIndex, niDataTypeDesc.identifier.numeric),
       TRUE);
 
     // Instance 3D Point
