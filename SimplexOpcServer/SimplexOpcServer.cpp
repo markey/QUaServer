@@ -83,10 +83,10 @@ void SimplexOpcServer::startServer()
    vaDescription.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
    vaDescription.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
    vaDescription.valueRank = -1;
-   vaDescription.dataType = UA_TYPES[UA_TYPES_BYTESTRING].typeId;
+   vaDescription.dataType = UA_TYPES[UA_TYPES_STRING].typeId;
 
-   UA_ByteString bsAttrDesc = UA_BYTESTRING((char *) "PointDataType");
-   UA_Variant_setScalar(&vaDescription.value, &bsAttrDesc, &UA_TYPES[UA_TYPES_BYTESTRING]);
+   UA_String bsAttrDesc = UA_String_fromChars((char *) "PointDataType");
+   UA_Variant_setScalar(&vaDescription.value, &bsAttrDesc, &UA_TYPES[UA_TYPES_STRING]);
 
    ret = UA_Server_addVariableNode(m_server->ua_server(),
       UA_NODEID_NULL,
