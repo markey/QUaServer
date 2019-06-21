@@ -143,7 +143,7 @@ void SimplexOpcServer::startServer()
     vattr.dataType = PointType.typeId;
     vattr.valueRank = -1;
     vattr.accessLevel = UA_ACCESSLEVELMASK_READ;
-    UA_Variant_setScalar(&vattr.value, &p1, &PointType);
+    UA_Variant_setScalarCopy(&vattr.value, &p1, &PointType);
 
     ret = UA_Server_addVariableNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point"),
                               UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
