@@ -66,7 +66,7 @@ private:
             false,                           /* .overlayable (depends on endianness and
                                              the absence of padding) */
             3,                               /* .membersSize */
-            0,                               /* .binaryEncodingId, the numeric
+            4244,                            /* .binaryEncodingId, the numeric
                                              identifier used on the wire (the
                                              namespaceindex is from .typeId) */
             Point_members

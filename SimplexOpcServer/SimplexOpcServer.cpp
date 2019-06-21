@@ -25,15 +25,15 @@ void SimplexOpcServer::startServer()
     QUaFolderObject * objsFolder = m_server->objectsFolder();
 
     /* Make your custom datatype known to the stack */
-//    UA_DataType *types = (UA_DataType*)UA_malloc(sizeof(UA_DataType));
-//    UA_DataTypeMember *members = (UA_DataTypeMember*)UA_malloc(sizeof(UA_DataTypeMember) * 3);
-//    members[0] = Point_members[0];
-//    members[1] = Point_members[1];
-//    members[2] = Point_members[2];
-//    types[0] = PointType;
-//    types[0].members = members;
+    UA_DataType *types = (UA_DataType*)UA_malloc(sizeof(UA_DataType));
+    UA_DataTypeMember *members = (UA_DataTypeMember*)UA_malloc(sizeof(UA_DataTypeMember) * 3);
+    members[0] = Point_members[0];
+    members[1] = Point_members[1];
+    members[2] = Point_members[2];
+    types[0] = PointType;
+    types[0].members = members;
 
-    m_server->setCustomDataTypes(&PointType);
+    m_server->setCustomDataTypes(types);
     ///////////////
 
    UA_NodeId DataTypeEncodingNodeId;
@@ -93,7 +93,6 @@ void SimplexOpcServer::startServer()
       oAttr, NULL, &DataTypeEncodingNodeId);
     Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
-//   PointType.binaryEncodingId = DataTypeEncodingNodeId.identifier.numeric;
 
    ret = UA_Server_addReference(m_server->ua_server(),
       PointType.typeId,
