@@ -44,13 +44,14 @@ void SimplexOpcServer::startServer()
    dtAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType description");
    dtAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
 
-   UA_Server_addDataTypeNode(m_server->ua_server(), PointType.typeId,
+   ret = UA_Server_addDataTypeNode(m_server->ua_server(), PointType.typeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_STRUCTURE),
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
       UA_QUALIFIEDNAME(1, (char *) "PointDataType"),
       dtAttr,
       NULL,
       NULL);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
 
 
