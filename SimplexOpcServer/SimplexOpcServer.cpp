@@ -36,10 +36,10 @@ void SimplexOpcServer::startServer()
     m_server->setCustomDataTypes(&PointType);
     ///////////////
 
-   UA_DataTypeAttributes dtAttr;
    UA_NodeId DataTypeEncodingNodeId;
    UA_StatusCode ret;
 
+   UA_DataTypeAttributes dtAttr;
    UA_DataTypeAttributes_init(&dtAttr);
    dtAttr.description = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType description");
    dtAttr.displayName = UA_LOCALIZEDTEXT((char *) "en_US", (char *) "PointDataType");
@@ -53,28 +53,6 @@ void SimplexOpcServer::startServer()
       NULL);
 
 
-
-    // Register 3D Point
-    UA_VariableTypeAttributes dattr = UA_VariableTypeAttributes_default;
-    dattr.description = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
-    dattr.displayName = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
-    dattr.dataType = PointType.typeId;
-    dattr.valueRank = UA_VALUERANK_SCALAR;
-
-    Point p;
-    p.x = 0.0;
-    p.y = 0.0;
-    p.z = 0.0;
-    UA_Variant_setScalar(&dattr.value, &p, &PointType);
-
-    ret = UA_Server_addVariableTypeNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point Type"),
-                                  UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
-                                  UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
-                                  UA_QUALIFIEDNAME(1, (char *) "3D.Point"),
-                                  UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
-                                  dattr, NULL, NULL);
-
-    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
    /* Add DataTypeDescription variable */
    UA_NodeId niDataTypeDesc;
@@ -114,6 +92,8 @@ void SimplexOpcServer::startServer()
       oAttr, NULL, &DataTypeEncodingNodeId);
     Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
+//   PointType.binaryEncodingId = DataTypeEncodingNodeId.identifier.numeric;
+
    ret = UA_Server_addReference(m_server->ua_server(),
       PointType.typeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASENCODING),
@@ -128,6 +108,30 @@ void SimplexOpcServer::startServer()
       TRUE);
     Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
+
+    // Register 3D Point
+    UA_VariableTypeAttributes dattr = UA_VariableTypeAttributes_default;
+    dattr.description = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
+    dattr.displayName = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
+    dattr.dataType = PointType.typeId;
+    dattr.valueRank = UA_VALUERANK_SCALAR;
+
+    Point p;
+    p.x = 0.0;
+    p.y = 0.0;
+    p.z = 0.0;
+    UA_Variant_setScalar(&dattr.value, &p, &PointType);
+
+    ret = UA_Server_addVariableTypeNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point Type"),
+                                  UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                  UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
+                                  UA_QUALIFIEDNAME(1, (char *) "3D.Point"),
+                                  UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                  dattr, NULL, NULL);
+
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
+
+
     // Instance 3D Point
     Point p1;
     p1.x = 3.0;
@@ -138,6 +142,7 @@ void SimplexOpcServer::startServer()
     vattr.displayName = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
     vattr.dataType = PointType.typeId;
     vattr.valueRank = -1;
+    vattr.accessLevel = UA_ACCESSLEVELMASK_READ;
     UA_Variant_setScalar(&vattr.value, &p1, &PointType);
 
     ret = UA_Server_addVariableNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point"),
