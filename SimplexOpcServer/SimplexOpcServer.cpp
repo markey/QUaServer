@@ -25,15 +25,15 @@ void SimplexOpcServer::startServer()
     QUaFolderObject * objsFolder = m_server->objectsFolder();
 
     /* Make your custom datatype known to the stack */
-    UA_DataType *types = (UA_DataType*)UA_malloc(sizeof(UA_DataType));
-    UA_DataTypeMember *members = (UA_DataTypeMember*)UA_malloc(sizeof(UA_DataTypeMember) * 3);
-    members[0] = Point_members[0];
-    members[1] = Point_members[1];
-    members[2] = Point_members[2];
-    types[0] = PointType;
-    types[0].members = members;
+//    UA_DataType *types = (UA_DataType*)UA_malloc(sizeof(UA_DataType));
+//    UA_DataTypeMember *members = (UA_DataTypeMember*)UA_malloc(sizeof(UA_DataTypeMember) * 3);
+//    members[0] = Point_members[0];
+//    members[1] = Point_members[1];
+//    members[2] = Point_members[2];
+//    types[0] = PointType;
+//    types[0].members = members;
 
-    m_server->setCustomDataTypes(types);
+    m_server->setCustomDataTypes(&PointType);
     ///////////////
 
    UA_DataTypeAttributes dtAttr;
@@ -105,25 +105,28 @@ void SimplexOpcServer::startServer()
    oAttr.displayName = UA_LOCALIZEDTEXT((char * ) "en_US", (char * ) "Default Binary");
    oAttr.description = UA_LOCALIZEDTEXT((char * ) "en_US", (char * ) "Default Binary");
 
-   UA_Server_addObjectNode(m_server->ua_server(),
+   ret = UA_Server_addObjectNode(m_server->ua_server(),
       UA_NODEID_NULL,
       UA_NODEID_NULL,
       UA_NODEID_NULL,
       UA_QUALIFIEDNAME(0, (char * ) "Default Binary"),
       UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPEENCODINGTYPE),
       oAttr, NULL, &DataTypeEncodingNodeId);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
-   UA_Server_addReference(m_server->ua_server(),
+   ret = UA_Server_addReference(m_server->ua_server(),
       PointType.typeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASENCODING),
       UA_EXPANDEDNODEID_NUMERIC(DataTypeEncodingNodeId.namespaceIndex, DataTypeEncodingNodeId.identifier.numeric),
       TRUE);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
-   UA_Server_addReference(m_server->ua_server(),
+   ret = UA_Server_addReference(m_server->ua_server(),
       DataTypeEncodingNodeId,
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASDESCRIPTION),
       UA_EXPANDEDNODEID_NUMERIC(niDataTypeDesc.namespaceIndex, niDataTypeDesc.identifier.numeric),
       TRUE);
+    Q_ASSERT(ret == UA_STATUSCODE_GOOD);
 
     // Instance 3D Point
     Point p1;
@@ -134,7 +137,7 @@ void SimplexOpcServer::startServer()
     vattr.description = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
     vattr.displayName = UA_LOCALIZEDTEXT((char *) "en-US", (char *) "3D Point");
     vattr.dataType = PointType.typeId;
-    vattr.valueRank = UA_VALUERANK_SCALAR;
+    vattr.valueRank = -1;
     UA_Variant_setScalar(&vattr.value, &p1, &PointType);
 
     ret = UA_Server_addVariableNode(m_server->ua_server(), UA_NODEID_STRING(1, (char *) "3D.Point"),

@@ -56,7 +56,7 @@ private:
             }
     };
 
-    const UA_DataType PointType = {
+    UA_DataType PointType = {
             UA_TYPENAME("Point")             /* .typeName */
             {1, UA_NODEIDTYPE_NUMERIC, {4242}}, /* .typeId */
             sizeof(Point),                   /* .memSize */
